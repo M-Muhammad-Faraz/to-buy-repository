@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css" />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"
+      integrity="sha512-KZmyTq3PLx9EZl0RHShHQuXtrvdJ+m35tuOiwlcZfs/rE7NZv29ygNA8SFCkMXTnYZQK2OX0Gm2qKGfvWEtRXA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor"
+      crossorigin="anonymous"
+    />
+  </head>
+
+  <body ng-app="toBuy">
+    <script>
+      const angularApp = angular.module("toBuy", []);
+      angularApp.controller("controller1", ($scope) => {
+        $scope.list_of_items = [];
+        $scope.boughtList = [];
+
+        $scope.movetoBought = function (item) {
+          console.log("function called");
+          $scope.boughtList = [
+            ...$scope.boughtList,
+            ...$scope.list_of_items.filter((itm) => {
+              return itm.id === item.id;
+            }),
+          ];
+          $scope.list_of_items = $scope.list_of_items.filter((itm) => {
+            return itm.id !== item.id;
+          });
+          console.log($scope.boughtList);
+        };
+        $scope.formHandler = function (e, quantity, product) {
+          e.preventDefault();
+
+          if (quantity && product) {
+            const newToBuy = {
+              id: Math.floor(Math.random() * 100000000),
+              qty: quantity,
+              item: product,
+            };
+            $scope.list_of_items = [newToBuy, ...$scope.list_of_items];
+          }
+          $scope.qty = "";
+          $scope.item = "";
+        };
+        $scope.checked = true;
+      });
+    </script>
+    <div class="container">
+      <div class="row" ng-controller="controller1">
+        <!-- To Buy -->
+        <div class="col-lg-6 maxheight600">
+          <nav
+            class="navbar px-2 navbar-dark bg-dark d-flex justify-content-between align-items-center"
+          >
+            <div>
+              <a class="navbar-brand" href="#"> TO BUY</a>
+            </div>
+            <div class="floating-action-button">
+              <button onclick="showMenu()">
+                <img
+                  src="./assets/imgs/add.png"
+                  alt=""
+                  width="12px"
+                  height="12px"
+                />
+              </button>
+            </div>
+          </nav>
+          <div class="position-relative">
+            <div class="add-new-task-form">
+              <form ng-submit="formHandler($event,qty,item)">
+                <input
+                  type="number"
+                  name="qty"
+                  id=""
+                  ng-model="qty"
+                  placeholder="Quantity x1"
+                  required
+                />
+                <input
+                  type="text"
+                  name="item"
+                  id=""
+                  ng-model="item"
+                  placeholder="Bread, Drinks?"
+                  required
+                />
+                <button class="btn btn-dark" type="submit" click="showMenu()">
+                  Add
+                </button>
+              </form>
+            </div>
+
+            <div>
+              <ul class="list">
+                <li class="">
+                  <div
+                    class="d-flex justify-content-between align-items-center p-2"
+                    ng-repeat="itm in list_of_items"
+                  >
+                    <div>Buy {{itm.item}} <b>X</b> {{itm.qty}}</div>
+                    <div>
+                      <button
+                        class="btn btn-primary"
+                        ng-click="movetoBought(itm)"
+                      >
+                        Bought
+                      </button>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bought -->
+        <div class="col-lg-6 maxheight600">
+          <nav class="navbar navbar-dark bg-primary">
+            <a class="navbar-brand" href="#"> Bought</a>
+          </nav>
+          <div>
+            <ul class="list">
+              <li class="">
+                <div
+                  class="d-flex justify-content-between align-items-center p-2 text-color-success"
+                  ng-repeat="itm in boughtList"
+                >
+                  <div>Buy {{itm.item}} <b>X</b> {{itm.qty}}</div>
+                  <div>
+                    <img
+                      src="./assets/imgs/check-mark.png"
+                      alt=""
+                      width="24px"
+                      height="24px"
+                    />
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+    crossorigin="anonymous"
+  ></script>
+  <script>
+    function showMenu() {
+      const elem = document.querySelector(".add-new-task-form");
+      elem.classList.toggle("show");
+    }
+  </script>
+</html>
